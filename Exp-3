@@ -1,0 +1,54 @@
+#include <stdio.h>
+
+struct Process {
+    int pid;        // Process ID
+    int burstTime;  // CPU Burst Time
+    int waitingTime;
+    int turnaroundTime;
+};
+
+int main() {
+    int n, i;
+    float avgWT = 0, avgTAT = 0;
+
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+
+    struct Process p[n];
+
+    // Input burst times
+    for (i = 0; i < n; i++) {
+        p[i].pid = i + 1;
+        printf("Enter Burst Time for Process %d: ", p[i].pid);
+        scanf("%d", &p[i].burstTime);
+    }
+
+    // Calculate Waiting Time (FCFS)
+    p[0].waitingTime = 0;  // First process has 0 waiting time
+    for (i = 1; i < n; i++) {
+        p[i].waitingTime = p[i - 1].waitingTime + p[i - 1].burstTime;
+    }
+
+    // Calculate Turnaround Time
+    for (i = 0; i < n; i++) {
+        p[i].turnaroundTime = p[i].waitingTime + p[i].burstTime;
+    }
+
+    // Display results
+    printf("\nProcess\tBurst Time\tWaiting Time\tTurnaround Time\n");
+    for (i = 0; i < n; i++) {
+        printf("P%d\t%d\t\t%d\t\t%d\n", 
+               p[i].pid, p[i].burstTime, p[i].waitingTime, p[i].turnaroundTime);
+        avgWT += p[i].waitingTime;
+        avgTAT += p[i].turnaroundTime;
+    }
+
+    // Calculate averages
+    avgWT /= n;
+    avgTAT /= n;
+
+    printf("\nAverage Waiting Time = %.2f", avgWT);
+    printf("\nAverage Turnaround Time = %.2f\n", avgTAT);
+
+    return 0;
+}
