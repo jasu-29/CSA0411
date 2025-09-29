@@ -1,0 +1,53 @@
+/* Non-preemptive Shortest Job First Scheduling
+   Selects the waiting process with the smallest execution time next */
+#include <stdio.h>
+
+int main() {
+    int n;
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+
+    int at[n], bt[n], ct[n], tat[n], wt[n], done[n];
+    
+    // Input
+    for (int i = 0; i < n; i++) {
+        printf("Enter Arrival Time and Burst Time for P%d: ", i+1);
+        scanf("%d %d", &at[i], &bt[i]);
+        done[i] = 0; // process not finished yet
+    }
+
+    int time = 0, completed = 0;
+
+    // Scheduling loop
+    while (completed < n) {
+        int idx = -1, min_bt = 1e9;
+
+        // Find process with minimum burst time among available ones
+        for (int i = 0; i < n; i++) {
+            if (!done[i] && at[i] <= time && bt[i] < min_bt) {
+                min_bt = bt[i];
+                idx = i;
+            }
+        }
+
+        if (idx == -1) { // No process has arrived yet
+            time++;
+            continue;
+        }
+
+        time += bt[idx];        // Execute process fully
+        ct[idx] = time;         // Completion time
+        tat[idx] = ct[idx] - at[idx];  // Turnaround time
+        wt[idx] = tat[idx] - bt[idx];  // Waiting time
+        done[idx] = 1;          // Mark as finished
+        completed++;
+    }
+
+    // Print results
+    printf("\nP#\tAT\tBT\tCT\tTAT\tWT\n");
+    for (int i = 0; i < n; i++) {
+        printf("P%d\t%d\t%d\t%d\t%d\t%d\n", i+1, at[i], bt[i], ct[i], tat[i], wt[i]);
+    }
+
+    return 0;
+}
